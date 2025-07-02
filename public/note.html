@@ -1,0 +1,105 @@
+<!-- public/note.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EncryptedText</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- ...existing code... -->
+      <header class="app-header">
+        <div class="header-content">
+          <h1 class="logo">EncryptedText<span class="logo-dot">.</span></h1>
+          <div class="header-actions">
+            <button
+              class="btn btn-primary"
+              onclick="window.location.href='/'"
+            >
+              <i class="fas fa-home"></i> Home
+            </button>
+            <button
+              class="btn btn-primary"
+              id="themeSwitcher"
+              title="Switch Theme"
+            >
+              <i class="fas fa-moon"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+      <!-- ...existing code... -->
+
+      <main class="main-content">
+        <div class="note-container">
+          <div class="note-header">
+            <h2 id="noteTitle">
+              Note: <span id="noteIdDisplay">Loading...</span>
+            </h2>
+            <div class="note-actions">
+              <button class="btn btn-icon" onclick="saveNote()" title="Save">
+                <i class="fas fa-save"></i>
+              </button>
+              <button class="btn btn-icon" onclick="copyNote()" title="Copy">
+                <i class="fas fa-copy"></i>
+              </button>
+              <button
+                class="btn btn-icon btn-danger"
+                onclick="deleteNote()"
+                title="Delete"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <textarea
+            id="noteArea"
+            placeholder="Type your encrypted note here..."
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          ></textarea>
+
+          <div class="status-container">
+            <p id="statusMsg" class="status-message"></p>
+            <div class="last-saved" id="lastSaved"></div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="app-footer">
+        <p>© 2025 EncryptedText | All notes are encrypted</p>
+      </footer>
+    </div>
+
+    <script src="script.js"></script>
+
+    <div id="passwordModal" class="modal">
+      <div class="modal-content">
+        <h3>Enter Password</h3>
+        <p>
+          This note is password protected. Please enter the password to view or
+          edit.
+        </p>
+        <input
+          type="password"
+          id="passwordInput"
+          placeholder="Enter password"
+          autocomplete="off"
+        />
+        <div class="modal-buttons">
+          <button class="btn btn-primary" id="confirmPassword">Unlock</button>
+          <button class="btn" id="cancelPassword">Cancel</button>
+        </div>
+        <p id="passwordError" class="error-message"></p>
+      </div>
+    </div>
+  </body>
+</html>
