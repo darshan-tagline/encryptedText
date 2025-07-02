@@ -1,0 +1,8 @@
+<svg width="300" height="80" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="80" fill="#0077B6" rx="10"></rect>
+  <text x="70" y="50" font-family="Arial, sans-serif" font-size="28" fill="#FFFFFF">
+    EncryptedText
+  </text>
+  <path d="M40 30 a10 10 0 0 1 20 0 v10 h-20 z" fill="#90E0EF"></path>
+  <rect x="40" y="40" width="20" height="20" fill="#90E0EF"></rect>
+</svg>
