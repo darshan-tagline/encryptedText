@@ -13,7 +13,6 @@ const statusMsg = document.getElementById("statusMsg");
 const noteIdDisplay = document.getElementById("noteIdDisplay");
 const lastSaved = document.getElementById("lastSaved");
 
-
 let password = null;
 let noteExists = false;
 
@@ -28,7 +27,6 @@ function showPasswordModal(options) {
   const modalTitle = modal.querySelector("h3");
   const modalMessage = modal.querySelector("p");
 
-  // Set modal content based on options
   modalTitle.textContent = options.title || "Enter Password";
   modalMessage.textContent =
     options.message ||
@@ -184,19 +182,17 @@ async function decryptText(encText, password) {
 // === NOTE ACTIONS ===
 async function loadNote() {
   if (!noteId) {
-    statusMsg.textContent = "No note ID found.";
+    showToast("No note ID found.");
     return;
   }
 
   noteIdDisplay.textContent = noteId;
-  statusMsg.textContent = "Loading...";
+  showToast("Loading...");
 
   try {
     const res = await fetch(`${API_BASE}/${encodeURIComponent(noteId)}`);
     if (res.status == 404) {
-      statusMsg.textContent =
-        "New note. Please set a password to save this note.";
-
+      showToast("New note. Please set a password to save this note.");
       password = await showPasswordModal({
         title: "Set Password",
         message: "Create a password for this new note:",
@@ -205,7 +201,7 @@ async function loadNote() {
       });
 
       if (!password) {
-        statusMsg.textContent = "Password is required.";
+        showToast("Password is required.");
         window.location.href = "/";
         return;
       }
@@ -218,7 +214,7 @@ async function loadNote() {
 
     const json = await res.json();
     if (!json.data?.encText) {
-      statusMsg.textContent = "Malformed note.";
+      showToast("Malformed note.");
       return;
     }
 
@@ -238,16 +234,16 @@ async function loadNote() {
       try {
         const decryptedText = await decryptText(json.data.encText, password);
         textArea.value = decryptedText;
-        statusMsg.textContent = "Note decrypted successfully.";
+        showToast("Note decrypted successfully.");
         noteExists = true;
         decrypted = true;
         updateLastSaved();
       } catch (err) {
-        statusMsg.textContent = "Decryption failed. Wrong password?";
+        showToast("Decryption failed. Wrong password?");
       }
     }
   } catch (err) {
-    statusMsg.textContent = "Error loading note.";
+    showToast("Error loading note.");
     console.error(err);
   }
 }
@@ -259,7 +255,7 @@ function updateLastSaved() {
 
 async function saveNote() {
   if (!noteId) {
-    statusMsg.textContent = "Missing note ID.";
+    showToast("Missing note ID.");
     return;
   }
 
@@ -272,12 +268,12 @@ async function saveNote() {
     });
 
     if (!password) {
-      statusMsg.textContent = "Password required.";
+      showToast("Password required.");
       return;
     }
   }
 
-  statusMsg.textContent = "Encrypting and saving...";
+  showToast("Encrypting and saving...");
 
   try {
     const encText = await encryptText(textArea.value, password);
@@ -288,14 +284,14 @@ async function saveNote() {
     });
 
     if (res.ok) {
-      statusMsg.textContent = "Note saved securely.";
+      showToast("Note saved securely.");
       noteExists = true;
       updateLastSaved();
     } else {
-      statusMsg.textContent = "Failed to save note.";
+      showToast("Failed to save note.");
     }
   } catch (e) {
-    statusMsg.textContent = "Encryption failed.";
+    showToast("Encryption failed.");
     console.error(e);
   }
 }
@@ -304,15 +300,10 @@ function copyNote() {
   navigator.clipboard
     .writeText(textArea.value)
     .then(() => {
-      statusMsg.textContent = "Copied to clipboard!";
-      setTimeout(() => {
-        if (statusMsg.textContent === "Copied to clipboard!") {
-          statusMsg.textContent = "";
-        }
-      }, 2000);
+      showToast("Copied to clipboard!");
     })
     .catch(() => {
-      statusMsg.textContent = "Failed to copy to clipboard";
+      showToast("Failed to copy to clipboard");
     });
 }
 
@@ -321,8 +312,7 @@ async function deleteNote() {
     "Delete this note permanently? This cannot be undone."
   );
   if (!confirmed) return;
-
-  statusMsg.textContent = "Deleting note...";
+  showToast("Deleting note...");
 
   try {
     const res = await fetch(`${API_BASE}/${encodeURIComponent(noteId)}`, {
@@ -331,21 +321,20 @@ async function deleteNote() {
 
     if (res.ok) {
       textArea.value = "";
-      statusMsg.textContent = "Note deleted.";
+      showToast("Note deleted.");
       noteExists = false;
       setTimeout(() => {
         window.location.href = "/";
       }, 1500);
     } else {
-      statusMsg.textContent = "Failed to delete note.";
+      showToast("Failed to delete note.");
     }
   } catch (err) {
-    statusMsg.textContent = "Error deleting note.";
+    showToast("Error deleting note.");
     console.error(err);
   }
 }
 
-// Auto-save functionality
 let saveTimeout;
 textArea.addEventListener("input", () => {
   clearTimeout(saveTimeout);
@@ -356,10 +345,8 @@ textArea.addEventListener("input", () => {
   }
 });
 
-// Theme Switcher
 const themeBtn = document.getElementById("themeSwitcher");
 if (themeBtn) {
-  // Load theme from localStorage
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark-theme");
     themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
@@ -374,16 +361,24 @@ if (themeBtn) {
   });
 }
 
-// Handle browser back/forward navigation to force password prompt again
 window.addEventListener("pageshow", (event) => {
   if (event.persisted) {
     password = null;
     noteExists = false;
     textArea.value = "";
-    statusMsg.textContent = "Please enter your password to unlock the note.";
+    showToast("Please enter your password to unlock the note.");
     loadNote();
   }
 });
 
-// Initialize the app
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
 window.addEventListener("DOMContentLoaded", loadNote);
