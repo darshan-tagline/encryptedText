@@ -84,7 +84,6 @@ async function showConfirmModal(message) {
   const modalTitle = modal.querySelector("h3");
   const modalMessage = modal.querySelector("p");
 
-  // Configure for confirmation dialog
   modalTitle.textContent = "Confirm Action";
   modalMessage.textContent = message;
   passwordInput.style.display = "none";
@@ -245,7 +244,7 @@ async function loadNote() {
     }
   } catch (err) {
     showToast("Error loading note.");
-    console.error(err);
+    console.error("Internal Server Error",err);
   }
 }
 
@@ -259,7 +258,7 @@ async function saveNote() {
     showToast("Missing note ID.");
     return;
   }
-  
+
   if (!password) {
     password = await showPasswordModal({
       title: "Set Password",
@@ -273,11 +272,10 @@ async function saveNote() {
       return;
     }
   }
-  
+
   showToast("Encrypting and saving...");
   await saveCurrentTab();
   try {
-  
     const res = await fetch(`${API_BASE}/${encodeURIComponent(noteId)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -456,13 +454,13 @@ document.getElementById("addTabBtn").onclick = async function () {
   currentTab = tabsData.length - 1;
   await loadCurrentTab();
   renderTabs();
-  await saveNote(); 
+  await saveNote();
 };
 
 window.addEventListener("keydown", function (e) {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
     e.preventDefault();
-    clearTimeout(saveTimeout); 
+    clearTimeout(saveTimeout);
     saveNote();
   }
 });

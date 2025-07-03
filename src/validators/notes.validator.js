@@ -6,7 +6,7 @@ exports.saveNoteValidator = joi.object({
     .min(3)
     .trim()
     .pattern(/^[a-zA-Z][a-zA-Z0-9]*$/)
-    .disallow(/^\d+$/) 
+    .disallow(/^\d+$/)
     .required()
     .messages({
       "string.base": "Note id must be a string",

@@ -1,84 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EncryptedText</title>
-  <link rel="icon" href="./logo.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-</head>
-<body>
-  <div class="app-container">
-    <header class="app-header">
-      <div class="header-content">
-        <h1 class="logo">EncryptedText<span class="logo-dot">.</span></h1>
-        <!-- <div class="header-actions">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EncryptedText</title>
+    <link rel="icon" href="./logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <div class="header-content">
+          <h1 class="logo">EncryptedText<span class="logo-dot">.</span></h1>
+          <!-- <div class="header-actions">
           <button class="btn btn-primary" onclick="goToNote()">
             <i class="fas fa-lock"></i> Open Existing
           </button>
         </div> -->
-      </div>
-    </header>
+        </div>
+      </header>
 
-    <main class="main-content">
-      <div class="hero-section">
-        <div class="hero-content">
-          <h2>Password-protected + Encrypted notes</h2>
-          <p class="subtitle">Encrypted & secured in your browser</p>
-          
-          <div class="note-id-input">
-            <input 
-              id="noteIdInput" 
-              placeholder="Enter note name (e.g. MySecretNote)" 
-              autocomplete="off"
-              autocorrect="off"
-              spellcheck="false"
-            />
-            <button class="btn btn-large" onclick="goToNote()">
-              <i class="fas fa-arrow-right"></i>
-            </button>
-          </div>
-          
-          <div class="features">
-            <div class="feature">
-              <i class="fas fa-lock"></i>
-              <span>No registration</span>
+      <main class="main-content">
+        <div class="hero-section">
+          <div class="hero-content">
+            <h2>Password-protected + Encrypted notes</h2>
+            <p class="subtitle">Encrypted & secured in your browser</p>
+
+            <div class="note-id-input">
+              <input
+                id="noteIdInput"
+                placeholder="Enter note name (e.g. MySecretNote)"
+                autocomplete="off"
+                autocorrect="off"
+                spellcheck="false"
+              />
+              <button class="btn btn-large" onclick="goToNote()">
+                <i class="fas fa-arrow-right"></i>
+              </button>
             </div>
-            <div class="feature">
-              <i class="fas fa-shield-alt"></i>
-              <span>Browser encryption</span>
-            </div>
-            <div class="feature">
-              <i class="fas fa-infinity"></i>
-              <span>Unlimited notes</span>
+
+            <div class="features">
+              <div class="feature">
+                <i class="fas fa-lock"></i>
+                <span>No registration</span>
+              </div>
+              <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <span>Browser encryption</span>
+              </div>
+              <div class="feature">
+                <i class="fas fa-infinity"></i>
+                <span>Unlimited notes</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <footer class="app-footer">
-      <p>© 2025 EncryptedText | All notes are encrypted</p>
-    </footer>
-  </div>
+      <footer class="app-footer">
+        <p>© 2025 EncryptedText | All notes are encrypted</p>
+      </footer>
+    </div>
 
-  <script>
-    function goToNote() {
-      const id = document.getElementById('noteIdInput').value.trim();
-      if (id) {
+    <script>
+      function isValidNoteId(id) {
+        const trimmedId = id.trim();
+
+        const isCorrectLength = trimmedId.length >= 3;
+        const matchesPattern = /^[a-zA-Z][a-zA-Z0-9]*$/.test(trimmedId);
+        const isNotAllDigits = !/^\d+$/.test(trimmedId);
+
+        return isCorrectLength && matchesPattern && isNotAllDigits;
+      }
+
+      function goToNote() {
+        const id = document.getElementById("noteIdInput").value.trim();
+
+        if (!id) {
+          showToast("Please enter a note name");
+          return;
+        }
+
+        if (!isValidNoteId(id)) {
+          showToast("Invalid note name.");
+          return;
+        }
+
         window.location.href = `note.html?id=${encodeURIComponent(id)}`;
-      } else {
-        alert("Please enter a note name");
       }
-    }
-    
-    // Allow pressing Enter to submit
-    document.getElementById('noteIdInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        goToNote();
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
       }
-    });
-  </script>
-</body>
+    </script>
+    <div id="toast" class="toast"></div>
+  </body>
 </html>

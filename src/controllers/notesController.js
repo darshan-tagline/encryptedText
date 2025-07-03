@@ -29,7 +29,7 @@ exports.saveNote = async (req, res) => {
   try {
     const { id } = req.params;
     const { encText } = req.body;
- 
+
     const updateFields = {
       id,
       encText,

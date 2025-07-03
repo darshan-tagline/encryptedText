@@ -16,7 +16,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: var(--text-color);
   background-color: var(--light-gray);
   line-height: 1.6;
@@ -168,7 +168,7 @@ body {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .features {
     flex-direction: column;
     gap: 1rem;
@@ -181,8 +181,8 @@ body {
   margin: 2rem auto;
   padding: 2.5rem 2.5rem 2rem 2.5rem;
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 1.5px 6px rgba(0,0,0,0.06);
-  max-width: 794px;   /* A4 width in px at 96dpi */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1.5px 6px rgba(0, 0, 0, 0.06);
+  max-width: 794px; /* A4 width in px at 96dpi */
   min-height: 1123px; /* A4 height in px at 96dpi */
   width: 100%;
   display: flex;
@@ -248,7 +248,7 @@ body {
   color: var(--text-color);
   box-shadow: none;
   resize: none;
-  font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  font-family: "Fira Mono", "Consolas", "Menlo", monospace;
   outline: none;
 }
 
@@ -311,7 +311,7 @@ body.dark-theme .note-container,
 body.dark-theme .app-footer {
   background: #181818;
   color: #e0e0e0;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.32), 0 1.5px 6px rgba(0,0,0,0.16);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.32), 0 1.5px 6px rgba(0, 0, 0, 0.16);
 }
 
 body.dark-theme #noteArea {
@@ -401,7 +401,8 @@ body.dark-theme .modal-content input[type="password"] {
 
 /* Responsive header/footer */
 @media (max-width: 600px) {
-  .app-header, .app-footer {
+  .app-header,
+  .app-footer {
     padding: 0.5rem 0.2rem;
   }
   .header-content {
@@ -431,7 +432,7 @@ body.dark-theme .modal-content input[type="password"] {
   left: 50%;
   bottom: 30px;
   font-size: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   opacity: 0;
   transition: opacity 0.5s ease-in-out, visibility 0.5s;
   pointer-events: none;
@@ -472,7 +473,8 @@ body.dark-theme .modal-content input[type="password"] {
   white-space: nowrap;
   transition: background 0.2s;
 }
-.tab-btn.active, .tab-btn:hover {
+.tab-btn.active,
+.tab-btn:hover {
   background: var(--primary-color);
   color: #fff;
 }
@@ -516,7 +518,8 @@ body.dark-theme .tab-btn {
   background: #232323;
   color: #eee;
 }
-body.dark-theme .tab-btn.active, body.dark-theme .tab-btn:hover {
+body.dark-theme .tab-btn.active,
+body.dark-theme .tab-btn:hover {
   background: #4a90e2;
   color: #fff;
 }
