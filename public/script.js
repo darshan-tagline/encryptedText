@@ -86,6 +86,8 @@ async function showConfirmModal(message) {
 
   modalTitle.textContent = "Confirm Action";
   modalMessage.textContent = message;
+  confirmBtn.textContent = "Delete"; 
+  cancelBtn.textContent = "Cancel";
   passwordInput.style.display = "none";
   errorMsg.style.display = "none";
 
