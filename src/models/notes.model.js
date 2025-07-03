@@ -10,8 +10,9 @@ const noteSchema = new mongoose.Schema(
       lowercase: true,
     },
     encText: {
-      type: mongoose.Schema.Types.Mixed,
+      type: [mongoose.Schema.Types.Mixed],
       required: true,
+      default: [],
     },
   },
   {

@@ -19,10 +19,7 @@
         <div class="header-content">
           <h1 class="logo">EncryptedText<span class="logo-dot">.</span></h1>
           <div class="header-actions">
-            <button
-              class="btn btn-primary"
-              onclick="window.location.href='/'"
-            >
+            <button class="btn btn-primary" onclick="window.location.href='/'">
               <i class="fas fa-home"></i> Home
             </button>
             <button
@@ -60,6 +57,12 @@
             </div>
           </div>
 
+          <div class="tabs-container">
+            <div id="tabs" class="tabs-bar"></div>
+            <button class="tab-add-btn" id="addTabBtn" title="Add Tab">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
           <textarea
             id="noteArea"
             placeholder="Type your encrypted note here..."

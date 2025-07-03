@@ -31,7 +31,7 @@ function showPasswordModal(options) {
   modalMessage.textContent =
     options.message ||
     "This note is password protected. Please enter the password to view or edit.";
-  confirmBtn.textContent = options.confirmText || "Unlock";
+  confirmBtn.textContent = options.confirmText || "confirm";
   cancelBtn.style.display = options.showCancel === false ? "none" : "block";
 
   modal.style.display = "flex";
@@ -185,7 +185,6 @@ async function loadNote() {
     showToast("No note ID found.");
     return;
   }
-
   noteIdDisplay.textContent = noteId;
   showToast("Loading...");
 
@@ -199,25 +198,24 @@ async function loadNote() {
         confirmText: "Set Password",
         errorMessage: "Password cannot be empty",
       });
-
       if (!password) {
         showToast("Password is required.");
         window.location.href = "/";
         return;
       }
-
       noteExists = false;
-      textArea.value = "";
+      tabsData = [await encryptText("", password)];
+      currentTab = 0;
+      await loadCurrentTab();
+      renderTabs();
       updateLastSaved();
       return;
     }
-
     const json = await res.json();
     if (!json.data?.encText) {
       showToast("Malformed note.");
       return;
     }
-
     let decrypted = false;
     while (!decrypted) {
       password = await showPasswordModal({
@@ -225,15 +223,18 @@ async function loadNote() {
         message: "This note is password protected. Please enter the password:",
         errorMessage: "Invalid password",
       });
-
       if (!password) {
         window.location.href = "/";
         return;
       }
-
       try {
-        const decryptedText = await decryptText(json.data.encText, password);
-        textArea.value = decryptedText;
+        tabsData = json.data.encText;
+        if (!Array.isArray(tabsData) || tabsData.length === 0) {
+          tabsData = [await encryptText("", password)];
+        }
+        currentTab = 0;
+        await loadCurrentTab();
+        renderTabs();
         showToast("Note decrypted successfully.");
         noteExists = true;
         decrypted = true;
@@ -258,7 +259,7 @@ async function saveNote() {
     showToast("Missing note ID.");
     return;
   }
-
+  
   if (!password) {
     password = await showPasswordModal({
       title: "Set Password",
@@ -272,15 +273,15 @@ async function saveNote() {
       return;
     }
   }
-
+  
   showToast("Encrypting and saving...");
-
+  await saveCurrentTab();
   try {
-    const encText = await encryptText(textArea.value, password);
+  
     const res = await fetch(`${API_BASE}/${encodeURIComponent(noteId)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ encText } || {}),
+      body: JSON.stringify({ encText: tabsData }),
     });
 
     if (res.ok) {
@@ -309,7 +310,7 @@ function copyNote() {
 
 async function deleteNote() {
   const confirmed = await showConfirmModal(
-    "Delete this note permanently? This cannot be undone."
+    "Delete this note permanently? This cannot be undo."
   );
   if (!confirmed) return;
   showToast("Deleting note...");
@@ -336,15 +337,13 @@ async function deleteNote() {
 }
 
 let saveTimeout;
-textArea.addEventListener("input", () => {
+function resetAutoSaveTimer() {
   clearTimeout(saveTimeout);
-  if (noteExists) {
-    saveTimeout = setTimeout(() => {
-      saveNote();
-    }, 2000);
-  }
-});
-
+  saveTimeout = setTimeout(() => {
+    if (noteExists) saveNote();
+  }, 5000);
+}
+textArea.addEventListener("input", resetAutoSaveTimer);
 const themeBtn = document.getElementById("themeSwitcher");
 if (themeBtn) {
   if (localStorage.getItem("theme") === "dark") {
@@ -381,4 +380,90 @@ function showToast(message) {
   }, 3000);
 }
 
+let tabsData = [];
+let currentTab = 0;
+
+function renderTabs() {
+  const tabsDiv = document.getElementById("tabs");
+  tabsDiv.innerHTML = "";
+  tabsData.forEach((_, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn" + (idx === currentTab ? " active" : "");
+    btn.textContent = `Tab ${idx + 1}`;
+    btn.onclick = () => switchTab(idx);
+
+    if (tabsData.length > 1) {
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "tab-close";
+      closeBtn.innerHTML = "&times;";
+      closeBtn.title = "Close Tab";
+      closeBtn.onclick = async (e) => {
+        e.stopPropagation();
+        const confirmed = await showConfirmModal(
+          "Close this tab? This cannot be undone."
+        );
+        if (confirmed) {
+          await deleteTab(idx);
+        }
+      };
+      btn.appendChild(closeBtn);
+    }
+    tabsDiv.appendChild(btn);
+  });
+}
+async function switchTab(idx) {
+  if (idx === currentTab) return;
+  await saveCurrentTab();
+  currentTab = idx;
+  await loadCurrentTab();
+  renderTabs();
+}
+async function deleteTab(idx) {
+  if (tabsData.length <= 1) {
+    showToast("At least one tab is required.");
+    return;
+  }
+  tabsData.splice(idx, 1);
+  if (currentTab >= tabsData.length) {
+    currentTab = tabsData.length - 1;
+  }
+  await loadCurrentTab();
+  renderTabs();
+  await saveNote();
+}
+
+async function saveCurrentTab() {
+  if (!password) return;
+  const text = textArea.value;
+  tabsData[currentTab] = await encryptText(text, password);
+}
+
+async function loadCurrentTab() {
+  if (!password) return;
+  if (!tabsData[currentTab]) {
+    textArea.value = "";
+    return;
+  }
+  try {
+    textArea.value = await decryptText(tabsData[currentTab], password);
+  } catch {
+    textArea.value = "";
+  }
+}
+document.getElementById("addTabBtn").onclick = async function () {
+  await saveCurrentTab();
+  tabsData.push(await encryptText("", password));
+  currentTab = tabsData.length - 1;
+  await loadCurrentTab();
+  renderTabs();
+  await saveNote(); 
+};
+
+window.addEventListener("keydown", function (e) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+    e.preventDefault();
+    clearTimeout(saveTimeout); 
+    saveNote();
+  }
+});
 window.addEventListener("DOMContentLoaded", loadNote);

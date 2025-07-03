@@ -17,7 +17,7 @@ exports.getNote = async (req, res) => {
 
     return response(res, 200, "Note found successfully", {
       id,
-      encText: note.encText,
+      encText: note.encText || [],
     });
   } catch (err) {
     console.error("Internal Server Error", err);
@@ -29,10 +29,7 @@ exports.saveNote = async (req, res) => {
   try {
     const { id } = req.params;
     const { encText } = req.body;
-
-    if (!encText) {
-      return response(res, 400, "Encrypted text is required");
-    }
+ 
     const updateFields = {
       id,
       encText,

@@ -442,4 +442,94 @@ body.dark-theme .modal-content input[type="password"] {
   opacity: 1;
   pointer-events: auto;
 }
+/* Browser-like tabs bar */
+.tabs-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  background: transparent;
+  border-bottom: 2px solid var(--medium-gray);
+  min-height: 40px;
+  padding-bottom: 0.2rem;
+}
 
+.tab-btn {
+  background: var(--medium-gray);
+  border: none;
+  border-radius: 8px 8px 0 0;
+  padding: 0.5rem 2.2rem 0.5rem 1.2rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-color);
+  position: relative;
+  margin-right: 0.1rem;
+  min-width: 80px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.tab-btn.active, .tab-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+}
+.tab-close {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  opacity: 0.7;
+  transition: color 0.2s, opacity 0.2s;
+}
+.tab-btn.active .tab-close,
+.tab-btn:hover .tab-close {
+  color: #fff;
+  opacity: 1;
+}
+.tab-add-btn {
+  background: transparent;
+  border: none;
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  padding: 0.2rem 0.6rem;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.tab-add-btn:hover {
+  background: var(--medium-gray);
+}
+body.dark-theme .tabs-bar {
+  border-bottom: 2px solid #333;
+}
+body.dark-theme .tab-btn {
+  background: #232323;
+  color: #eee;
+}
+body.dark-theme .tab-btn.active, body.dark-theme .tab-btn:hover {
+  background: #4a90e2;
+  color: #fff;
+}
+body.dark-theme .tab-close {
+  color: #aaa;
+}
+body.dark-theme .tab-btn.active .tab-close,
+body.dark-theme .tab-btn:hover .tab-close {
+  color: #fff;
+}
+body.dark-theme .tab-add-btn {
+  color: #4a90e2;
+}
+body.dark-theme .tab-add-btn:hover {
+  background: #232323;
+}
