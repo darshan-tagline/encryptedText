@@ -466,4 +466,20 @@ window.addEventListener("keydown", function (e) {
     saveNote();
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const noteIdDisplay = document.getElementById("noteIdDisplay");
+
+  function getNoteIdFromPath() {
+    const path = window.location.pathname;
+    const parts = path.split("/").filter(Boolean);
+    return parts.length > 0 ? parts[parts.length - 1] : null;
+  }
+
+  const noteId = getNoteIdFromPath();
+
+  if (noteIdDisplay && noteId) {
+    noteIdDisplay.textContent = noteId;
+    document.title = `${noteId} - EncryptedText`;
+  }
+});
 window.addEventListener("DOMContentLoaded", loadNote);
